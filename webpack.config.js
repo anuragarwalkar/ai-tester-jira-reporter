@@ -1,18 +1,31 @@
-const path = require('path');
-const nodeExternals = require('webpack-node-externals');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-require('dotenv').config();
+import path from 'path';
+import nodeExternals from 'webpack-node-externals';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
-module.exports = {
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default {
   target: 'node',
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   entry: './server/server.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'server.js',
-    clean: true
+    clean: true,
+    module: true,
+    chunkFormat: 'module'
   },
-  externals: [nodeExternals()],
+  experiments: {
+    outputModule: true
+  },
+  externals: [nodeExternals({
+    importType: 'module'
+  })],
   node: {
     __dirname: false,
     __filename: false,
